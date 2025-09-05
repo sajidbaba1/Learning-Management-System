@@ -2,6 +2,7 @@ package com.lms.controller;
 
 import com.lms.security.JwtTokenUtil;
 import com.lms.entity.User;
+import com.lms.entity.Role;
 import com.lms.payload.AuthRequest;
 import com.lms.payload.AuthResponse;
 import com.lms.repository.UserRepository;
@@ -9,8 +10,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Collections;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -38,8 +45,8 @@ public class AuthController {
         );
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        User user = userRepository.findByUsername(authRequest.getUsername())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        Optional<User> userOpt = userRepository.findByUsername(authRequest.getUsername());
+        User user = userOpt.orElseThrow(() -> new RuntimeException("User not found"));
 
         final String token = jwtTokenUtil.generateToken(
                 new org.springframework.security.core.userdetails.User(

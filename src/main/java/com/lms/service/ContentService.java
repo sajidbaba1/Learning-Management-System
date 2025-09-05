@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -47,4 +48,9 @@ public class ContentService {
         
         return contentRepository.save(content);
     }
+
+    public Optional<Content> getContent(Long contentId) {
+        return contentRepository.findById(contentId);
+    }
 }
+

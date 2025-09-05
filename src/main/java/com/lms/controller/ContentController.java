@@ -7,6 +7,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Optional;
+
 @RestController
 @RequestMapping("/api/content")
 public class ContentController {
@@ -30,8 +32,8 @@ public class ContentController {
 
     @GetMapping("/{contentId}")
     public ResponseEntity<?> getContent(@PathVariable Long contentId) {
-        return contentService.getContent(contentId)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        Optional<Content> content = contentService.getContent(contentId);
+        return content.map(ResponseEntity::ok)
+                     .orElse(ResponseEntity.notFound().build());
     }
 }
